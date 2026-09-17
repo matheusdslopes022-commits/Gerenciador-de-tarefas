@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="img/check.png" id="logo-icon">
+                <div>
+                    <h1>TaskFlow</h1>
+                    <p>Gerenciador de Tarefas</p>
+                </div>
+            </div>
+
+            <nav>
+                <ul>
+                    <li class="active"><a href="#">Inicio</a></li>
+                    <li><a href="#">Todas as tarefas</a></li>
+                    <li><a href="#">Estatísticas</a></li>
+                    <li><a href="#">Configurações</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-card">
+                <img src="img/foguete.png">
+                <p>Grandes objetivos são construídos com pequenas tarefas.</p>
+                <div class="progress-bar"></div>
+            </div>
+        </aside>
+
+
+        <main class="main-content">
+
+            <header class="top-bar">
+                <div class="barra-pesquisa">
+                    <input type="text" placeholder="🔍︎  Buscar tarefas...">
+                </div>
+            </header>
+
+
+            <section class="welcome">
+                <h2>Olá, <span>Matheus!</span></h2>
+                <p>Organize suas tarefas, mantenha o foco e conquiste seus objetivos.</p>
+            </section>
+
+            <section class="card new-task-card">
+                <div class="card-header">
+                    <span class="icon-box">📝</span>
+                    <div>
+                        <h3>Nova Tarefa</h3>
+                        <p>Adicione uma nova tarefa à sua lista.</p>
+                    </div>
+                </div>
+
+                <form id="task-form">
+                    <div class="form-row">
+                        <div class="form-group flex-2">
+                            <label for="description">Descrição *</label>
+                            <input type="text" id="description" placeholder="Ex: Estudar JavaScript..." required>
+                        </div>
+
+                        <div class="form-group flex-1">
+                            <label for="categoria">Categoria *</label>
+                            <select id="categoria" required>
+                                <option value="" disabled selected>Selecione uma categoria</option>
+                                <option value="Pessoal">Pessoal</option>
+                                <option value="estudos">Estudos</option>
+                                <option value="Trabalho">Trabalho</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="prioridade">Prioridade *</label>
+                            <select id="priority" required>
+                                <option value="" disabled selected>Selecione a prioridade</option>
+                                <option value="baixa">Baixa</option>
+                                <option value="media">Média</option>
+                                <option value="alta">Alta</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group flex-2">
+                            <label for="data">Data de conclusão *</label>
+                            <input type="date" id="data" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group flex-btn">
+                        <button type="submit" class="btn-add">+ Adicionar Tarefa</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="cards">
+                <div class="card">
+                    <div class="card-icon">📋</div>
+                    <p>Total de tarefas</p>
+                    <span class="card-number">0</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🕒</div>
+                    <p>Pendentes</p>
+                    <span class="card-number">0</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">✅</div>
+                    <p>Concluídas</p>
+                    <span class="card-number">0</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">⚠️</div>
+                    <p>Atrasadas</p>
+                    <span class="card-number">0</span>
+                </div>
+
+                <div class="filtro-card">
+                    <div class="filtro-header">
+                        <span class="filtro-icon">🎯</span>
+                        <h3>Filtros</h3>
+                    </div>
+
+                    <div class="filters-form">
+                        <div class="filter-group">
+                            <label for="filter-status">Situação</label>
+                            <select id="filter-status">
+                                <option value="todas">Todas</option>
+                                <option value="pendente">Pendentes</option>
+                                <option value="concluida">Concluídas</option>
+                                <option value="atrasada">Atrasadas</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="filter-category">Categoria</label>
+                            <select id="filter-category">
+                                <option value="todas">Todas</option>
+                                <option value="estudos">Estudos</option>
+                                <option value="trabalho">Trabalho</option>
+                                <option value="pessoal">Pessoal</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="task-board-card">
+
+                <div class="task-board-header">
+                    <div class="task-board-icon">📋</div>
+                    <div class="task-board-title">
+                        <h3>Minhas Tarefas</h3>
+                        <p>Aqui estão todas as suas tarefas.</p>
+                    </div>
+                </div>
+
+
+                <div class="task-list-empty">
+                    <div class="empty-icon">📋</div>
+                    <h4>Nenhuma tarefa cadastrada.</h4>
+                    <p>Adicione uma tarefa para começar!</p>
+                </div>
+
+
+                <div class="task-list" id="task-list" style="display: none;">
+
+                </div>
+
+            </section>
+
+
+        </main>
+    </div>
+
+
+
+
+
+
+</body>
+
+</html>
