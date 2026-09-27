@@ -4,11 +4,9 @@ const button = document.getElementById("button");
 function layoutTarefa(tarefa) {
     const div = document.getElementById("task-list");
     div.innerHTML = "";
-
 }
 
 function criarTarefa(descricao, categoria, prioridade, data) {
-
     const tarefa = {
         id: Date.now(),
         descricao: descricao,
@@ -20,20 +18,35 @@ function criarTarefa(descricao, categoria, prioridade, data) {
     tarefas.push(tarefa);
     console.log("Lista de tarefas atualizada:", tarefas);
     layoutTarefa(tarefa);
-
 }
 
 button.addEventListener("click", (e) => {
     e.preventDefault();
-    const descricao = document.getElementById("descricao");
-    const categoria = document.getElementById("categoria");
-    const prioridade = document.getElementById("prioridade");
-    const data = document.getElementById("data");
+    
+
+    const descricaoInput = document.getElementById("descricao");
+    const categoriaInput = document.getElementById("categoria");
+    const prioridadeInput = document.getElementById("prioridade");
+    const dataInput = document.getElementById("data");
 
 
-    criarTarefa(descricao.value, categoria.value, prioridade.value, data.value);
+    const descricao = descricaoInput.value.trim();
+    const categoria = categoriaInput.value.trim();
+    const prioridade = prioridadeInput.value.trim();
+    const data = dataInput.value.trim();
 
 
+    if (!descricao || !categoria || !prioridade || !data) {
+        alert("Por favor, preencha todos os campos antes de adicionar a tarefa!");
+        return; 
+    }
+
+   
+    criarTarefa(descricao, categoria, prioridade, data);
+
+
+    descricaoInput.value = "";
+    categoriaInput.value = "";
+    prioridadeInput.value = "";
+    dataInput.value = "";
 });
-
-
