@@ -1,6 +1,6 @@
 package com.example.gerenciadordetarefas.repository;
 
-import com.example.gerenciardoretarefas.model.Tarefa;
+import com.example.gerenciadordetarefas.model.Tarefa;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
