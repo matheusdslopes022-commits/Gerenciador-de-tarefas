@@ -1,16 +1,26 @@
 let tarefas = [];
 const button = document.getElementById("button");
+const API = "/api/tarefas";
+
+// Guarda o conteúdo original do HTML (ícone + "Nenhuma tarefa cadastrada.")
+const listaEl = document.querySelector(".task-list-empty");
+const htmlVazio = listaEl ? listaEl.innerHTML : "";
 
 function layoutTarefa() {
     const div = document.querySelector(".task-list-empty");
-    console.log("Elemento capturado:", div);
 
     if (!div) {
         console.error("Elemento '.task-list-empty' não encontrado!");
         return;
     }
 
-    div.innerHTML = ""; 
+    // Sem tarefas: mostra o que já existe no HTML
+    if (tarefas.length === 0) {
+        div.innerHTML = htmlVazio;
+        return;
+    }
+
+    div.innerHTML = "";
     tarefas.forEach((tarefa) => {
         const card = document.createElement("div");
         card.classList.add("task-card");
@@ -18,7 +28,6 @@ function layoutTarefa() {
         // borda de prioridade
         const prioridadeClasse = (tarefa.prioridade || "baixa");
         card.classList.add(`prioridade-${prioridadeClasse}`);
-
 
         card.innerHTML = `
             <div class="task-card-content">
@@ -30,13 +39,13 @@ function layoutTarefa() {
                 </div>
             </div>
             <div class="task-actions">
-                <button class="action-btn btn-concluir" onclick="concluirTarefa(${tarefa.id})">
+                <button class="action-btn btn-concluir" onclick="concluirTarefa('${tarefa.id}')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                     <span>Concluir</span>
                 </button>
-                <button class="action-btn btn-excluir" onclick="excluirTarefa(${tarefa.id})">
+                <button class="action-btn btn-excluir" onclick="excluirTarefa('${tarefa.id}')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -46,28 +55,52 @@ function layoutTarefa() {
             </div>
         `;
 
-        div.appendChild(card); 
+        div.appendChild(card);
     });
 }
 
-function criarTarefa(descricao, categoria, prioridade, data) {
-    const tarefa = {
-        id: Date.now(),
-        descricao: descricao,
-        categoria: categoria,
-        prioridade: prioridade,
-        data: data
-    };
-
-    tarefas.push(tarefa);
-    console.log("Lista de tarefas atualizada:", tarefas);
-    layoutTarefa();
+async function carregarTarefas() {
+    try {
+        const resposta = await fetch(API);
+        if (!resposta.ok) throw new Error("Status " + resposta.status);
+        tarefas = await resposta.json();
+        layoutTarefa();
+    } catch (erro) {
+        console.error("Erro ao carregar tarefas:", erro);
+    }
 }
 
-// Funções para manipular ações dos botões
-function excluirTarefa(id) {
-    tarefas = tarefas.filter(t => t.id !== id);
-    layoutTarefa();
+async function criarTarefa(descricao, categoria, prioridade, data) {
+    try {
+        const resposta = await fetch(API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ descricao, categoria, prioridade, data })
+        });
+
+        if (!resposta.ok) {
+            alert("Erro ao salvar a tarefa!");
+            return;
+        }
+        await carregarTarefas();
+    } catch (erro) {
+        console.error("Erro ao criar tarefa:", erro);
+        alert("Erro ao salvar a tarefa!");
+    }
+}
+
+async function excluirTarefa(id) {
+    try {
+        const resposta = await fetch(`${API}/${id}`, { method: "DELETE" });
+        if (!resposta.ok) {
+            alert("Erro ao excluir a tarefa!");
+            return;
+        }
+        await carregarTarefas();
+    } catch (erro) {
+        console.error("Erro ao excluir tarefa:", erro);
+        alert("Erro ao excluir a tarefa!");
+    }
 }
 
 function concluirTarefa(id) {
@@ -82,7 +115,7 @@ button.addEventListener("click", (e) => {
     const prioridadeInput = document.getElementById("prioridade");
     const dataInput = document.getElementById("data");
 
-    // Limpa bordas vermelhas antes da validação (incluído dataInput no reset)
+    // Limpa bordas vermelhas antes da validação
     [descricaoInput, categoriaInput, prioridadeInput, dataInput].forEach(input => {
         if (input) input.style.border = "";
     });
@@ -117,4 +150,7 @@ button.addEventListener("click", (e) => {
     categoriaInput.value = "";
     prioridadeInput.value = "";
     dataInput.value = "";
-}); 
+});
+
+// Carrega as tarefas do banco ao abrir a página
+carregarTarefas();
