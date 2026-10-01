@@ -28,6 +28,8 @@ function formatarData(data) {
     return d && m && a ? `${d}/${m}/${a}` : data;
 }
 
+
+//filtro#
 function tarefasFiltradas() {
     const status = filtroStatus ? filtroStatus.value : "todas";
     const categoria = filtroCategoria ? filtroCategoria.value : "todas";
