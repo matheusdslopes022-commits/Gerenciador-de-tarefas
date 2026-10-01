@@ -1,265 +1,322 @@
-let tarefas = [];
-const button = document.getElementById("button");
 const API = "/api/tarefas";
+let tarefas = []; 
 
-const listaEl = document.querySelector(".task-list-empty");
-const htmlVazio = listaEl ? listaEl.innerHTML : "";
-
-const filtroStatus = document.getElementById("filter-status");
+const botaoAdicionar = document.getElementById("button");
+const listaDeTarefas = document.querySelector(".task-list-empty");
+const filtroSituacao = document.getElementById("filter-status");
 const filtroCategoria = document.getElementById("filter-category");
 const campoBusca = document.getElementById("busca");
 
-function hojeLocal() {
-    const d = new Date();
-    const mes = String(d.getMonth() + 1).padStart(2, "0");
-    const dia = String(d.getDate()).padStart(2, "0");
-    return `${d.getFullYear()}-${mes}-${dia}`;
+// Guarda a mensagem "Nenhuma tarefa cadastrada" que já está no HTML
+const htmlVazio = listaDeTarefas.innerHTML;
+
+
+// Retorna a data de hoje
+function dataDeHoje() {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    return ano + "-" + mes + "-" + dia;
 }
 
-function situacao(tarefa) {
-    if (tarefa.concluida) return "concluida";
-    if (tarefa.data && tarefa.data < hojeLocal()) return "atrasada";
+// Descobre se a tarefa está "concluida", "atrasada" ou "pendente"
+function pegarSituacao(tarefa) {
+    if (tarefa.concluida) {
+        return "concluida";
+    }
+    if (tarefa.data < dataDeHoje()) {
+        return "atrasada";
+    }
     return "pendente";
 }
 
+// Tira a data do formato americano 2026-10-01 em 01/10/2026
 function formatarData(data) {
-    if (!data) return "";
-    const [a, m, d] = data.split("-");
-    return d && m && a ? `${d}/${m}/${a}` : data;
+    const partes = data.split("-"); // ["2026", "10", "01"]
+    return partes[2] + "/" + partes[1] + "/" + partes[0];
 }
 
+// Devolve só as tarefas que passam nos filtros e na busca
+function filtrarTarefas() {
+    const situacaoEscolhida = filtroSituacao.value;
+    const categoriaEscolhida = filtroCategoria.value;
+    const textoBusca = campoBusca.value.trim().toLowerCase();
 
-//filtro#
-function tarefasFiltradas() {
-    const status = filtroStatus ? filtroStatus.value : "todas";
-    const categoria = filtroCategoria ? filtroCategoria.value : "todas";
-    const termo = campoBusca ? campoBusca.value.trim().toLowerCase() : "";
+    const resultado = [];
 
-    return tarefas.filter((t) => {
-        if (status !== "todas" && situacao(t) !== status) return false;
-        if (categoria !== "todas" && (t.categoria || "").toLowerCase() !== categoria.toLowerCase()) return false;
-        if (termo && !(t.descricao || "").toLowerCase().includes(termo)) return false;
-        return true;
-    });
-}
-
-function layoutTarefa() {
-    const div = document.querySelector(".task-list-empty");
-    if (!div) {
-        console.error("Elemento '.task-list-empty' não encontrado!");
-        return;
+    for (const tarefa of tarefas) {
+        // Filtro de situação
+        if (situacaoEscolhida !== "todas" && pegarSituacao(tarefa) !== situacaoEscolhida) {
+            continue;
+        }
+        // Filtro de categoria
+        if (categoriaEscolhida !== "todas" && tarefa.categoria !== categoriaEscolhida) {
+            continue;
+        }
+        // Busca pela descrição
+        if (!tarefa.descricao.toLowerCase().includes(textoBusca)) {
+            continue;
+        }
+        resultado.push(tarefa);
     }
 
-    atualizarDashboardCalculado(); // o dashboard sempre considera todas as tarefas
+    return resultado;
+}
 
-    const lista = tarefasFiltradas();
 
+
+// Cria o card de uma tarefa
+function criarCard(tarefa) {
+    const situacao = pegarSituacao(tarefa);
+    const nomesDaSituacao = { pendente: "Pendente", concluida: "Concluída", atrasada: "Atrasada" };
+
+    const card = document.createElement("div");
+    card.classList.add("task-card", "prioridade-" + tarefa.prioridade);
+    if (situacao === "concluida") {
+        card.classList.add("concluida");
+    }
+
+    // Estrutura do card (os textos são preenchidos abaixo, de forma segura)
+    card.innerHTML = `
+        <div class="task-card-content">
+            <h3 class="task-title"></h3>
+            <div class="task-tags">
+                <span class="badge badge-status badge-${situacao}"></span>
+                <span class="badge badge-category"></span>
+                <span class="task-date"></span>
+            </div>
+        </div>
+        <div class="task-actions">
+            <button class="action-btn btn-concluir">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Concluir</span>
+            </button>
+            <button class="action-btn btn-excluir">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Excluir</span>
+            </button>
+        </div>
+    `;
+
+    card.querySelector(".task-title").textContent = tarefa.descricao;
+    card.querySelector(".badge-status").textContent = nomesDaSituacao[situacao];
+    card.querySelector(".badge-category").textContent = tarefa.categoria;
+    card.querySelector(".task-date").textContent = formatarData(tarefa.data);
+
+    card.querySelector(".btn-concluir").addEventListener("click", function () {
+        concluirTarefa(tarefa.id);
+    });
+    card.querySelector(".btn-excluir").addEventListener("click", function () {
+        excluirTarefa(tarefa.id);
+    });
+
+    return card;
+}
+
+// Desenha a lista de tarefas na tela
+function mostrarTarefas() {
+    atualizarDashboard();
+
+    const lista = filtrarTarefas();
+
+    // Nenhuma tarefa para mostrar
     if (lista.length === 0) {
-        div.innerHTML = tarefas.length === 0
-            ? htmlVazio
-            : "<h4>Nenhuma tarefa encontrada.</h4><p>Ajuste os filtros ou a busca.</p>";
+        if (tarefas.length === 0) {
+            listaDeTarefas.innerHTML = htmlVazio;
+        } else {
+            listaDeTarefas.innerHTML = "<h4>Nenhuma tarefa encontrada.</h4><p>Ajuste os filtros ou a busca.</p>";
+        }
         return;
     }
 
-    div.innerHTML = "";
-    lista.forEach((tarefa) => {
-        const card = document.createElement("div");
-        card.classList.add("task-card");
-
-        const idTarefa = tarefa.id || tarefa._id;
-        const prioridadeClasse = (tarefa.prioridade || "baixa").toLowerCase();
-        const estado = situacao(tarefa);
-        card.classList.add(`prioridade-${prioridadeClasse}`);
-        if (estado === "concluida") card.classList.add("concluida");
-
-        const rotulo = { pendente: "Pendente", concluida: "Concluída", atrasada: "Atrasada" }[estado];
-
-        card.innerHTML = `
-            <div class="task-card-content">
-                <h3 class="task-title">${escapeHtml(tarefa.descricao)}</h3>
-                <div class="task-tags">
-                    <span class="badge badge-status badge-${estado}">${rotulo}</span>
-                    <span class="badge badge-category">${escapeHtml(tarefa.categoria)}</span>
-                    <span class="task-date">${escapeHtml(formatarData(tarefa.data))}</span>
-                </div>
-            </div>
-            <div class="task-actions">
-                <button class="action-btn btn-concluir" data-acao="concluir">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    <span>Concluir</span>
-                </button>
-                <button class="action-btn btn-excluir" data-acao="excluir">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                    <span>Excluir</span>
-                </button>
-            </div>
-        `;
-
-        card.querySelector('[data-acao="concluir"]').addEventListener("click", () => concluirTarefa(idTarefa));
-        card.querySelector('[data-acao="excluir"]').addEventListener("click", () => excluirTarefa(idTarefa));
-
-        div.appendChild(card);
-    });
+    // Limpa a lista e coloca um card para cada tarefa
+    listaDeTarefas.innerHTML = "";
+    for (const tarefa of lista) {
+        listaDeTarefas.appendChild(criarCard(tarefa));
+    }
 }
 
-function atualizarDashboardCalculado() {
+// Atualiza os números e as barrinhas dos 4 cards do topo
+function atualizarDashboard() {
+    let concluidas = 0;
+    let atrasadas = 0;
+    let pendentes = 0;
+
+    for (const tarefa of tarefas) {
+        const situacao = pegarSituacao(tarefa);
+        if (situacao === "concluida") {
+            concluidas++;
+        } else if (situacao === "atrasada") {
+            atrasadas++;
+        } else {
+            pendentes++;
+        }
+    }
+
     const total = tarefas.length;
-    let concluidas = 0, pendentes = 0, atrasadas = 0;
 
-    tarefas.forEach((t) => {
-        const s = situacao(t);
-        if (s === "concluida") concluidas++;
-        else if (s === "atrasada") atrasadas++;
-        else pendentes++;
-    });
+    document.getElementById("num-total").textContent = total;
+    document.getElementById("num-pendentes").textContent = pendentes;
+    document.getElementById("num-concluidas").textContent = concluidas;
+    document.getElementById("num-atrasadas").textContent = atrasadas;
 
-    atualizarDashboard(total, pendentes, concluidas, atrasadas);
+    // Barras: porcentagem em relação ao total
+    atualizarBarra("barra-total", total, total);
+    atualizarBarra("barra-pendentes", pendentes, total);
+    atualizarBarra("barra-concluidas", concluidas, total);
+    atualizarBarra("barra-atrasadas", atrasadas, total);
 }
 
-function atualizarDashboard(total, pendentes, concluidas, atrasadas) {
-    const definir = (id, valor) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = valor;
-    };
-    definir("num-total", total);
-    definir("num-pendentes", pendentes);
-    definir("num-concluidas", concluidas);
-    definir("num-atrasadas", atrasadas);
-
-    // Barras em porcentagem do total (a de "total" fica sempre cheia quando há tarefas)
-    const pct = (valor) => (total === 0 ? 0 : Math.round((valor / total) * 100));
-    const barra = (id, valor) => {
-        const el = document.getElementById(id);
-        if (el) el.style.width = `${pct(valor)}%`;
-    };
-    barra("barra-total", total);
-    barra("barra-pendentes", pendentes);
-    barra("barra-concluidas", concluidas);
-    barra("barra-atrasadas", atrasadas);
+function atualizarBarra(idDaBarra, valor, total) {
+    let porcentagem = 0;
+    if (total > 0) {
+        porcentagem = (valor / total) * 100;
+    }
+    document.getElementById(idDaBarra).style.width = porcentagem + "%";
 }
 
+
+
+// Busca todas as tarefas no servidor
 async function carregarTarefas() {
     try {
         const resposta = await fetch(API);
-        if (!resposta.ok) throw new Error("Status " + resposta.status);
         tarefas = await resposta.json();
-        layoutTarefa();
+        mostrarTarefas();
     } catch (erro) {
         console.error("Erro ao carregar tarefas:", erro);
     }
 }
 
-async function criarTarefa(descricao, categoria, prioridade, data) {
+// Envia uma nova tarefa. Retorna true se deu certo.
+async function criarTarefa(novaTarefa) {
     try {
         const resposta = await fetch(API, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ descricao, categoria, prioridade, data, concluida: false })
+            body: JSON.stringify(novaTarefa)
         });
 
         if (!resposta.ok) {
-            const erroTexto = await resposta.text();
-            console.error("Resposta do servidor:", resposta.status, erroTexto);
-            alert("Erro ao salvar a tarefa! Status: " + resposta.status);
+            alert("Erro ao salvar a tarefa!");
             return false;
         }
+
         await carregarTarefas();
         return true;
     } catch (erro) {
-        console.error("Erro na requisição POST:", erro);
         alert("Erro ao conectar com o servidor!");
         return false;
     }
 }
 
-async function excluirTarefa(id) {
-    if (!id || id === "undefined") return;
-
-    try {
-        const resposta = await fetch(`${API}/${id}`, { method: "DELETE" });
-        if (!resposta.ok) {
-            alert("Erro ao excluir a tarefa!");
-            return;
-        }
-        await carregarTarefas();
-    } catch (erro) {
-        console.error("Erro ao excluir tarefa:", erro);
-        alert("Erro ao excluir a tarefa!");
-    }
-}
-
+// Marca a tarefa como concluída
 async function concluirTarefa(id) {
-    if (!id || id === "undefined") return;
-
     try {
-        const resposta = await fetch(`${API}/${id}`, {
+        const resposta = await fetch(API + "/" + id, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ concluida: true })
         });
 
         if (!resposta.ok) {
-            alert("Erro ao finalizar tarefa!");
+            alert("Erro ao concluir a tarefa!");
             return;
         }
+
         await carregarTarefas();
     } catch (erro) {
-        console.error("Erro ao concluir tarefa:", erro);
+        alert("Erro ao conectar com o servidor!");
     }
 }
 
-if (button) {
-    button.addEventListener("click", async (e) => {
-        e.preventDefault();
+// Apaga a tarefa
+async function excluirTarefa(id) {
+    try {
+        const resposta = await fetch(API + "/" + id, { method: "DELETE" });
 
-        const descricaoInput = document.getElementById("descricao");
-        const categoriaInput = document.getElementById("categoria");
-        const prioridadeInput = document.getElementById("prioridade");
-        const dataInput = document.getElementById("data");
-
-        [descricaoInput, categoriaInput, prioridadeInput, dataInput].forEach((input) => {
-            if (input) input.style.border = "";
-        });
-
-        const descricao = descricaoInput ? descricaoInput.value.trim() : "";
-        const categoria = categoriaInput ? categoriaInput.value.trim() : "";
-        const prioridade = prioridadeInput ? prioridadeInput.value.trim() : "";
-        const data = dataInput ? dataInput.value.trim() : "";
-
-        if (!descricao) {
-            alert("Por favor, preencha o campo de descrição!");
-            if (descricaoInput) descricaoInput.style.border = "2px solid red";
-            return;
-        } else if (!categoria) {
-            alert("Por favor, escolha sua categoria!");
-            if (categoriaInput) categoriaInput.style.border = "2px solid red";
-            return;
-        } else if (!prioridade) {
-            alert("Por favor, escolha a prioridade!");
-            if (prioridadeInput) prioridadeInput.style.border = "2px solid red";
-            return;
-        } else if (!data) {
-            alert("Por favor, digite a data!");
-            if (dataInput) dataInput.style.border = "2px solid red";
+        if (!resposta.ok) {
+            alert("Erro ao excluir a tarefa!");
             return;
         }
 
-        const salvou = await criarTarefa(descricao, categoria, prioridade, data);
-        if (salvou) {
-            descricaoInput.value = "";
-            categoriaInput.value = "";
-            prioridadeInput.value = "";
-            dataInput.value = "";
-        }
-    });
+        await carregarTarefas();
+    } catch (erro) {
+        alert("Erro ao conectar com o servidor!");
+    }
 }
 
-[filtroStatus, filtroCategoria].forEach((el) => el && el.addEventListener("change", layoutTarefa));
-if (campoBusca) campoBusca.addEventListener("input", layoutTarefa);
 
+// Marca o campo com borda vermelha e avisa o usuário
+function mostrarErro(campo, mensagem) {
+    alert(mensagem);
+    campo.style.border = "2px solid red";
+}
+
+botaoAdicionar.addEventListener("click", async function (evento) {
+    evento.preventDefault(); // não deixa a página recarregar
+
+    const campoDescricao = document.getElementById("descricao");
+    const campoCategoria = document.getElementById("categoria");
+    const campoPrioridade = document.getElementById("prioridade");
+    const campoData = document.getElementById("data");
+
+    // Tira as bordas vermelhas de erros anteriores
+    campoDescricao.style.border = "";
+    campoCategoria.style.border = "";
+    campoPrioridade.style.border = "";
+    campoData.style.border = "";
+
+    const descricao = campoDescricao.value.trim();
+
+    // Confere se tudo foi preenchido
+    if (descricao === "") {
+        mostrarErro(campoDescricao, "Por favor, preencha a descrição!");
+        return;
+    }
+    if (campoCategoria.value === "") {
+        mostrarErro(campoCategoria, "Por favor, escolha a categoria!");
+        return;
+    }
+    if (campoPrioridade.value === "") {
+        mostrarErro(campoPrioridade, "Por favor, escolha a prioridade!");
+        return;
+    }
+    if (campoData.value === "") {
+        mostrarErro(campoData, "Por favor, escolha a data!");
+        return;
+    }
+
+    const novaTarefa = {
+        descricao: descricao,
+        categoria: campoCategoria.value,
+        prioridade: campoPrioridade.value,
+        data: campoData.value,
+        concluida: false
+    };
+
+    const deuCerto = await criarTarefa(novaTarefa);
+
+    // Só limpa o formulário se a tarefa foi salva
+    if (deuCerto) {
+        campoDescricao.value = "";
+        campoCategoria.value = "";
+        campoPrioridade.value = "";
+        campoData.value = "";
+    }
+});
+
+
+// Quando o usuário mexe nos filtros ou digita na busca, redesenha a lista
+filtroSituacao.addEventListener("change", mostrarTarefas);
+filtroCategoria.addEventListener("change", mostrarTarefas);
+campoBusca.addEventListener("input", mostrarTarefas);
+
+// Ao abrir a página, carrega as tarefas
 carregarTarefas();
