@@ -9,13 +9,6 @@ const filtroStatus = document.getElementById("filter-status");
 const filtroCategoria = document.getElementById("filter-category");
 const campoBusca = document.getElementById("busca");
 
-// Evita injeção de HTML/JS pelo texto digitado pelo usuário
-function escapeHtml(texto) {
-    return String(texto ?? "").replace(/[&<>"']/g, (c) => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[c]));
-}
-
 function hojeLocal() {
     const d = new Date();
     const mes = String(d.getMonth() + 1).padStart(2, "0");
