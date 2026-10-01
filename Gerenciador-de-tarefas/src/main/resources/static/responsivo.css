@@ -1,0 +1,298 @@
+/* =========================================================
+   RESPONSIVO - telas pequenas
+   Tablet: até 900px | Celular: até 600px
+   ========================================================= */
+
+/* ===== TABLET (até 900px) ===== */
+@media (max-width: 900px) {
+
+    .container {
+        flex-direction: column;
+    }
+
+    /* Sidebar vira uma barra no topo */
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        padding: 12px 16px;
+        border-right: none;
+        border-bottom: 1px solid #b9c0b3;
+    }
+
+    .logo {
+        margin-bottom: 0;
+    }
+
+    .logo svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .sidebar nav {
+        flex: none;
+    }
+
+    .sidebar nav ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .sidebar nav a {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .sidebar-card {
+        display: none;
+    }
+
+    .main-content {
+        gap: 16px;
+        min-width: 0; /* impede o conteúdo de "empurrar" a página para os lados */
+    }
+
+    .top-bar {
+        padding: 12px 16px;
+    }
+
+    /* Todos os blocos com a mesma margem lateral */
+    .welcome {
+        margin-top: 0;
+        padding: 16px;
+    }
+
+    .new-task-card,
+    .task-board-card {
+        margin: 0 16px;
+    }
+
+    /* Os 4 números + filtros viram uma grade de 2 colunas */
+    .cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 0 16px;
+    }
+
+    .card {
+        width: auto;
+        margin: 0;
+        padding: 14px;
+    }
+
+    .filtro-card {
+        grid-column: 1 / -1; /* filtros ocupam a linha toda */
+        width: auto;
+        margin: 0;
+    }
+
+    .task-board-card {
+        margin-bottom: 16px;
+    }
+
+    /* Título da tarefa: tira o espaço lateral do CSS base */
+    .task-card-content h3,
+    .task-title {
+        padding: 0;
+        text-align: left;
+    }
+
+    .task-board-header svg {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+    }
+}
+
+
+/* ===== CELULAR (até 600px) ===== */
+@media (max-width: 600px) {
+
+    .sidebar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 10px 12px;
+    }
+
+    /* Menu em uma linha só, com rolagem lateral se não couber */
+    .sidebar nav {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .sidebar nav ul {
+        flex-wrap: nowrap;
+    }
+
+    .sidebar nav a {
+        white-space: nowrap;
+        padding: 6px 10px;
+    }
+
+    /* Busca e botão de tema: busca ocupa o espaço que sobra */
+    .top-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .barra-pesquisa {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .barra-pesquisa input {
+        width: 100%;
+        padding: 9px;
+    }
+
+    .btn-tema {
+        padding: 9px 10px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .welcome {
+        padding: 8px 12px;
+    }
+
+    .welcome .wave-bg {
+        width: 70%;
+        opacity: 0.6;
+    }
+
+    .welcome h2 {
+        font-size: 1.3rem;
+    }
+
+    .welcome p {
+        font-size: 14px;
+    }
+
+    .new-task-card,
+    .task-board-card {
+        margin: 0 12px;
+        padding: 16px;
+    }
+
+    .task-board-card {
+        padding: 0;
+        margin-bottom: 12px;
+    }
+
+    /* Formulário em uma coluna */
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+
+    /* Números: continuam 2 por linha, só mais compactos */
+    .cards {
+        gap: 10px;
+        padding: 0 12px;
+    }
+
+    .card {
+        padding: 12px;
+    }
+
+    .card .board-icon-box,
+    .card .card-icon-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+    }
+
+    .card .board-icon-box svg,
+    .card .card-icon-box svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .card p {
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+    .card span {
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+
+    /* Filtros lado a lado: cabem bem, são só dois campos */
+    .filters-form {
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .filter-group select {
+        height: 38px;
+        padding: 0 8px;
+    }
+
+    /* Lista de tarefas */
+    .task-board-header {
+        padding: 16px;
+        align-items: center;
+    }
+
+    .task-board-header svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .task-card {
+        width: calc(100% - 24px);
+        padding: 12px;
+        gap: 10px;
+        border-left-width: 6px;
+    }
+
+    .task-card-content {
+        flex: 1;
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .task-card-content h3,
+    .task-title {
+        padding: 0;
+        text-align: left;
+        font-size: 1rem;
+        overflow-wrap: anywhere; /* quebra palavras muito longas */
+    }
+
+    .task-tags {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .badge {
+        padding: 3px 10px;
+        font-size: 0.78rem;
+    }
+
+    /* Botões de ação: ficam na coluna da direita */
+    .task-actions {
+        gap: 4px;
+        flex-direction: column;
+    }
+
+    .action-btn {
+        padding: 6px;
+    }
+}

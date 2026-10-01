@@ -1,0 +1,97 @@
+/* ===== BOTÃO DE TEMA E MODO ESCURO ===== */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-tema {
+    padding: 10px 16px;
+    border: 1px solid green;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #3f3f3f;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Modo escuro: vale quando o body tem a classe "escuro" */
+body.escuro {
+    background-color: #111827;
+    color: #e5e7eb;
+}
+
+body.escuro .main-content {
+    background-color: #111827;
+}
+
+body.escuro .sidebar,
+body.escuro .new-task-card,
+body.escuro .card,
+body.escuro .filtro-card,
+body.escuro .task-board-card,
+body.escuro .task-card {
+    background-color: #1f2937;
+}
+
+body.escuro .sidebar,
+body.escuro .new-task-card,
+body.escuro .card,
+body.escuro .filtro-card,
+body.escuro .task-board-card {
+    border-color: #374151;
+}
+
+/* Não mexe na borda esquerda do card, que tem a cor da prioridade */
+body.escuro .task-card {
+    border-top-color: #374151;
+    border-right-color: #374151;
+    border-bottom-color: #374151;
+}
+
+body.escuro .sidebar-card {
+    background-color: #374151;
+    border-color: #4b5563;
+}
+
+body.escuro .top-bar {
+    border-bottom-color: #374151;
+}
+
+body.escuro .task-title {
+    color: #f9fafb;
+}
+
+body.escuro .sidebar nav a,
+body.escuro .sidebar-card p,
+body.escuro .task-date {
+    color: #d1d5db;
+}
+
+body.escuro .sidebar nav a:hover {
+    background-color: #374151;
+    color: #4ade80;
+}
+
+body.escuro input,
+body.escuro select,
+body.escuro .btn-tema {
+    background-color: #111827;
+    color: #f9fafb;
+}
+
+body.escuro .progress-container {
+    background-color: #374151;
+}
+
+body.escuro .action-btn {
+    color: #d1d5db;
+}
+
+body.escuro .action-btn:hover {
+    color: #4ade80;
+}
+
+body.escuro .btn-excluir:hover {
+    color: #f87171;
+}
