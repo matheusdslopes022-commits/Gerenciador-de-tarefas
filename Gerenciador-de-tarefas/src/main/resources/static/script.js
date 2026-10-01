@@ -249,7 +249,6 @@ if (button) {
             return;
         }
 
-        // Só limpa o formulário se a tarefa foi realmente salva
         const salvou = await criarTarefa(descricao, categoria, prioridade, data);
         if (salvou) {
             descricaoInput.value = "";
