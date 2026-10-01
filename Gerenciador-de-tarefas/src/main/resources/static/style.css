@@ -17,7 +17,7 @@ body {
 
 .sidebar {
     width: 280px;
-    height: 120vh;
+    min-height: 100vh;
     background-color: #ffffff;
     border-right: 1px solid #b9c0b3;
     padding: 20px;
@@ -70,11 +70,8 @@ body {
 
 
 .sidebar-card {
-    position: fixed;
-    top: 800px;
-    left: 20px;
-    width: 19vh;
-    margin-bottom: 200px;
+    width: 100%;
+    margin-top: 20px;
     background-color: #f3f4f6;
     border-radius: 10px;
     padding: 10px;
@@ -113,7 +110,7 @@ body {
 }
 
 .sidebar img {
-    width: 50x;
+    width: 50px;
     height: 50px;
     object-fit: contain;
 }
@@ -360,7 +357,7 @@ body {
 #filter-status, #filter-category{
     border: 1px green solid;
     border-radius: 5px;
-    width: 100;
+    width: 100%;
 }
 
 .filter-group select {
@@ -386,6 +383,17 @@ body {
     overflow: hidden;             
 }
 
+.barra-fill {
+    height: 100%;
+    width: 0%; 
+    transition: width 0.4s ease; 
+}
+
+#barra-total { background-color: #3b82f6; }      
+#barra-pendentes { background-color: #f59e0b; }  
+#barra-concluidas { background-color: #10b981; }
+#barra-atrasadas { background-color: #ef4444; } 
+
 
 .barra {
     height: 100%;                
@@ -400,8 +408,8 @@ body {
     border: 1px solid #e5e7eb;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     border-radius: 12px;
-    margin: 0 24px;
-    height: 37%;
+    margin: 0 24px 24px;
+    min-height: 200px;
 }
 
 .task-board-header{
@@ -531,3 +539,16 @@ body {
 .btn-excluir:hover {
     color: #e63946;
 }
+
+.task-card.concluida .task-title {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.task-card.concluida .btn-concluir {
+    display: none;
+}
+
+.badge-atrasada { background-color: #e63946; }
+.badge-concluida { background-color: #10b981; }
+.badge-pendente { background-color: #f59e0b; }

@@ -2,7 +2,6 @@ package com.example.gerenciadordetarefas.controller;
 
 import com.example.gerenciadordetarefas.model.Tarefa;
 import com.example.gerenciadordetarefas.repository.TarefaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +12,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class TarefaController {
 
-    @Autowired
-    private TarefaRepository tarefaRepository;
+    private final TarefaRepository tarefaRepository;
+
+    public TarefaController(TarefaRepository tarefaRepository) {
+        this.tarefaRepository = tarefaRepository;
+    }
 
     @GetMapping
     public List<Tarefa> listarTodas() {
@@ -23,7 +25,19 @@ public class TarefaController {
 
     @PostMapping
     public Tarefa criarTarefa(@RequestBody Tarefa tarefa) {
+        tarefa.setId(null); // garante que sempre cria uma nova tarefa
         return tarefaRepository.save(tarefa);
+    }
+
+    // Usado pelo botão "Concluir" do front-end
+    @PutMapping("/{id}")
+    public ResponseEntity<Tarefa> atualizarTarefa(@PathVariable String id, @RequestBody Tarefa dados) {
+        return tarefaRepository.findById(id)
+                .map(tarefa -> {
+                    tarefa.setConcluida(dados.isConcluida());
+                    return ResponseEntity.ok(tarefaRepository.save(tarefa));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

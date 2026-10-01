@@ -46,7 +46,7 @@
 
             <header class="top-bar">
                 <div class="barra-pesquisa">
-                    <input type="text" placeholder="🔍︎  Buscar tarefas...">
+                    <input type="text" id="busca" placeholder="🔍︎  Buscar tarefas...">
                 </div>
             </header>
 
@@ -82,7 +82,7 @@
 
                     <div class="form-row">
                         <div class="form-group flex-2">
-                            <label for="description">Descrição <span>*</span></label>
+                            <label for="descricao">Descrição <span>*</span></label>
                             <input type="text" id="descricao" placeholder="Ex: Estudar JavaScript..." required>
                         </div>
 
@@ -91,7 +91,7 @@
                             <select id="categoria" required>
                                 <option value="" disabled selected>Selecione uma categoria</option>
                                 <option value="Pessoal">Pessoal</option>
-                                <option value="estudos">Estudos</option>
+                                <option value="Estudos">Estudos</option>
                                 <option value="Trabalho">Trabalho</option>
                                 <option value="Outros">Outros</option>
                             </select>
@@ -137,10 +137,10 @@
                         </svg>
                     </div>
                     <p>Total de tarefas</p>
-                    <span class="card-number">0</span>
+                    <span id="num-total">0</span>
                     <div class="progress-container">
 
-                        <div class="barra-total"></div>
+                        <div id="barra-total" class="barra-fill"></div>
                     </div>
                 </div>
 
@@ -153,10 +153,10 @@
                         </svg>
                     </div>
                     <p>Pendentes</p>
-                    <span class="card-number">0</span>
+                    <span id="num-pendentes">0</span>
                     <div class="progress-container">
 
-                        <div class="barra-pendentes"></div>
+                        <div id="barra-pendentes" class="barra-fill"></div>
                     </div>
                 </div>
 
@@ -170,10 +170,10 @@
                         </svg>
                     </div>
                     <p>Concluídas</p>
-                    <span class="card-number">0</span>
+                    <span id="num-concluidas">0</span>
                     <div class="progress-container">
 
-                        <div class="barra-concluidas"></div>
+                        <div id="barra-concluidas" class="barra-fill"></div>
                     </div>
                 </div>
 
@@ -187,10 +187,10 @@
                         </svg>
                     </div>
                     <p>Atrasadas</p>
-                    <span class="card-number">0</span>
+                    <span id="num-atrasadas">0</span>
                     <div class="progress-container">
 
-                        <div class="barra-atrasadas"></div>
+                        <div id="barra-atrasadas" class="barra-fill"></div>
                     </div>
                 </div>
 
@@ -221,9 +221,10 @@
                             <label for="filter-category">Categoria</label>
                             <select id="filter-category">
                                 <option value="todas">Todas</option>
-                                <option value="estudos">Estudos</option>
-                                <option value="trabalho">Trabalho</option>
-                                <option value="pessoal">Pessoal</option>
+                                <option value="Estudos">Estudos</option>
+                                <option value="Trabalho">Trabalho</option>
+                                <option value="Pessoal">Pessoal</option>
+                                <option value="Outros">Outros</option>
                             </select>
                         </div>
                     </div>
