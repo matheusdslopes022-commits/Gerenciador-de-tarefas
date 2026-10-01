@@ -1,3 +1,7 @@
+const nome = prompt("Digite seu nome");
+const spanNome = document.getElementById("nome");
+spanNome.innerText = nome;
+
 const API = "/api/tarefas";
 let tarefas = []; 
 
