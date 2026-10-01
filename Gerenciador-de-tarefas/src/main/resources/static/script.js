@@ -5,6 +5,23 @@ spanNome.innerText = nome;
 const API = "/api/tarefas";
 let tarefas = []; 
 
+const botaoTema = document.getElementById("botao-tema");
+
+function aplicarTema(escuro) {
+    if (escuro) {
+        document.body.classList.add("escuro");
+        botaoTema.textContent = "☀️ Modo claro";
+    } else {
+        document.body.classList.remove("escuro");
+        botaoTema.textContent = "🌙 Modo escuro";
+    }
+}
+
+botaoTema.addEventListener("click", function () {
+    const virarEscuro = !document.body.classList.contains("escuro");
+    aplicarTema(virarEscuro);
+});
+
 const botaoAdicionar = document.getElementById("button");
 const listaDeTarefas = document.querySelector(".task-list-empty");
 const filtroSituacao = document.getElementById("filter-status");
