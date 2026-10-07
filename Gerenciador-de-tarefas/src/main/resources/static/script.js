@@ -192,6 +192,8 @@ function atualizarDashboard() {
     atualizarBarra("barra-pendentes", pendentes, total);
     atualizarBarra("barra-concluidas", concluidas, total);
     atualizarBarra("barra-atrasadas", atrasadas, total);
+
+    atualizarGraficos();
 }
 
 function atualizarBarra(idDaBarra, valor, total) {
@@ -342,7 +344,7 @@ campoBusca.addEventListener("input", mostrarTarefas);
 // Ao abrir a página, carrega as tarefas
 carregarTarefas();
 
-
+// ===== SIDEBAR: navegação por âncoras =====
 (function () {
     const itens = document.querySelectorAll(".sidebar nav li");
     const ids = ["inicio", "estatisticas", "tarefas"];
@@ -354,7 +356,7 @@ carregarTarefas();
         });
     }
 
-   
+    // Ao rolar, destaca a seção que está na parte de cima da tela
     function atualizarAtivo() {
         let atual = ids[0];
         const noFim = window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
@@ -374,3 +376,154 @@ carregarTarefas();
     window.addEventListener("scroll", atualizarAtivo, { passive: true });
     atualizarAtivo();
 })();
+
+
+// ===== GRÁFICOS (Chart.js) =====
+const CORES_SITUACAO = { pendente: "#f59e0b", concluida: "#10b981", atrasada: "#e40303" };
+const CATEGORIAS = ["Pessoal", "Estudos", "Trabalho", "Outros"];
+
+let graficoSituacao = null;
+let graficoCategoria = null;
+let textoCentro = { pct: "0%", sub: "concluído" };
+
+function temaEscuro() {
+    return document.body.classList.contains("escuro");
+}
+
+// Escreve a porcentagem no meio da rosca
+const pluginTextoCentro = {
+    id: "textoCentro",
+    afterDraw(chart) {
+        if (chart.config.type !== "doughnut") return;
+        const area = chart.chartArea;
+        const x = (area.left + area.right) / 2;
+        const y = (area.top + area.bottom) / 2;
+        const ctx = chart.ctx;
+
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = temaEscuro() ? "#f9fafb" : "#1f2937";
+        ctx.font = "700 28px system-ui, sans-serif";
+        ctx.fillText(textoCentro.pct, x, y - 8);
+        ctx.fillStyle = temaEscuro() ? "#d1d5db" : "#4b5563";
+        ctx.font = "13px system-ui, sans-serif";
+        ctx.fillText(textoCentro.sub, x, y + 16);
+        ctx.restore();
+    }
+};
+
+// Conta as tarefas por situação e por categoria
+function contarTarefas() {
+    const situacao = { pendente: 0, concluida: 0, atrasada: 0 };
+    const porCategoria = {};
+    for (const c of CATEGORIAS) {
+        porCategoria[c] = { pendente: 0, concluida: 0, atrasada: 0 };
+    }
+
+    for (const tarefa of tarefas) {
+        const s = pegarSituacao(tarefa);
+        const c = CATEGORIAS.includes(tarefa.categoria) ? tarefa.categoria : "Outros";
+        situacao[s]++;
+        porCategoria[c][s]++;
+    }
+    return { situacao, porCategoria };
+}
+
+function criarGraficos() {
+    Chart.defaults.font.family = "system-ui, -apple-system, sans-serif";
+
+    graficoSituacao = new Chart(document.getElementById("grafico-situacao"), {
+        type: "doughnut",
+        data: {
+            labels: ["Pendentes", "Concluídas", "Atrasadas"],
+            datasets: [{
+                data: [0, 0, 0],
+                backgroundColor: [CORES_SITUACAO.pendente, CORES_SITUACAO.concluida, CORES_SITUACAO.atrasada],
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "65%",
+            plugins: { legend: { position: "bottom" } }
+        },
+        plugins: [pluginTextoCentro]
+    });
+
+    graficoCategoria = new Chart(document.getElementById("grafico-categoria"), {
+        type: "bar",
+        data: {
+            labels: CATEGORIAS,
+            datasets: [
+                { label: "Pendentes", data: [], backgroundColor: CORES_SITUACAO.pendente },
+                { label: "Concluídas", data: [], backgroundColor: CORES_SITUACAO.concluida },
+                { label: "Atrasadas", data: [], backgroundColor: CORES_SITUACAO.atrasada }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: "bottom" } },
+            scales: {
+                x: { stacked: true, grid: { display: false } },
+                y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } }
+            }
+        }
+    });
+}
+
+// Atualiza os gráficos (chamada sempre que as tarefas mudam ou o tema troca)
+function atualizarGraficos() {
+    const grade = document.getElementById("graficos-grid");
+    const vazio = document.getElementById("grafico-vazio");
+
+    if (typeof Chart === "undefined") {
+        grade.hidden = true;
+        vazio.hidden = false;
+        vazio.textContent = "Não foi possível carregar os gráficos.";
+        return;
+    }
+
+    if (tarefas.length === 0) {
+        grade.hidden = true;
+        vazio.hidden = false;
+        return;
+    }
+
+    grade.hidden = false;
+    vazio.hidden = true;
+
+    if (!graficoSituacao) {
+        criarGraficos();
+    }
+
+    const { situacao, porCategoria } = contarTarefas();
+    const escuro = temaEscuro();
+    const corTexto = escuro ? "#d1d5db" : "#4b5563";
+    const corGrade = escuro ? "#374151" : "#e5e7eb";
+
+    // Rosca
+    const pct = Math.round((situacao.concluida / tarefas.length) * 100);
+    textoCentro = { pct: pct + "%", sub: "concluído" };
+    graficoSituacao.data.datasets[0].data = [situacao.pendente, situacao.concluida, situacao.atrasada];
+    graficoSituacao.data.datasets[0].borderColor = escuro ? "#1f2937" : "#ffffff";
+    graficoSituacao.options.plugins.legend.labels.color = corTexto;
+    graficoSituacao.update();
+
+    // Barras
+    graficoCategoria.data.datasets[0].data = CATEGORIAS.map(c => porCategoria[c].pendente);
+    graficoCategoria.data.datasets[1].data = CATEGORIAS.map(c => porCategoria[c].concluida);
+    graficoCategoria.data.datasets[2].data = CATEGORIAS.map(c => porCategoria[c].atrasada);
+    graficoCategoria.options.plugins.legend.labels.color = corTexto;
+    graficoCategoria.options.scales.x.ticks.color = corTexto;
+    graficoCategoria.options.scales.y.ticks.color = corTexto;
+    graficoCategoria.options.scales.y.grid.color = corGrade;
+    graficoCategoria.update();
+}
+
+
+new MutationObserver(function () {
+    if (tarefas.length > 0) atualizarGraficos();
+}).observe(document.body, { attributes: true, attributeFilter: ["class"] });
