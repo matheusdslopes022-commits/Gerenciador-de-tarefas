@@ -645,3 +645,42 @@ body.escuro .progress-container {
 .badge-atrasada { background-color: #e63946; }
 .badge-concluida { background-color: #10b981; }
 .badge-pendente { background-color: #f59e0b; }
+
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Sidebar fica fixa na tela enquanto a página rola (só no desktop) */
+@media (min-width: 901px) {
+    .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+.sidebar nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar nav a svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.sidebar nav li.active a {
+    background-color: #e6f4ea;
+    color: #2d6a4f;
+    font-weight: 600;
+}
+
+body.escuro .sidebar nav li.active a {
+    background-color: #374151;
+    color: #4ade80;
+}

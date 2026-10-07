@@ -27,12 +27,11 @@
                 </div>
             </div>
 
-            <nav>
+            <nav aria-label="Navegação principal">
                 <ul>
-                    <li class="active"><a href="#">Inicio</a></li>
-                    <li><a href="#">Todas as tarefas</a></li>
-                    <li><a href="#">Estatísticas</a></li>
-                    <li><a href="#">Configurações</a></li>
+                    <li class="active"><a href="#inicio"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Início</span></a></li>
+                    <li><a href="#estatisticas"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg><span>Estatísticas</span></a></li>
+                    <li><a href="#tarefas"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><path d="M3 6h.01M3 12h.01M3 18h.01"></path></svg><span>Minhas tarefas</span></a></li>
                 </ul>
             </nav>
 
@@ -55,7 +54,7 @@
             </header>
 
 
-            <section class="welcome">
+            <section class="welcome" id="inicio">
                 <svg class="wave-bg" viewBox="0 0 500 150" preserveAspectRatio="none">
                     <path d="M 0 0 C 150 150 350 0 500 150 L 500 0 Z" fill="#22c55e" opacity="0.15"></path>
                     <path d="M 0 0 C 200 100 300 0 500 80 L 500 0 Z" fill="#16a34a" opacity="0.3"></path>
@@ -127,7 +126,7 @@
                 </form>
             </section>
 
-            <section class="cards">
+            <section class="cards" id="estatisticas">
                 <div class="card">
                     <div class="board-icon-box">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -235,7 +234,7 @@
                 </div>
             </section>
 
-            <section class="task-board-card">
+            <section class="task-board-card" id="tarefas">
 
                 <div class="task-board-header">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"

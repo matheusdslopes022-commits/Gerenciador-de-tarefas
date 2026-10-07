@@ -341,3 +341,36 @@ campoBusca.addEventListener("input", mostrarTarefas);
 
 // Ao abrir a página, carrega as tarefas
 carregarTarefas();
+
+
+(function () {
+    const itens = document.querySelectorAll(".sidebar nav li");
+    const ids = ["inicio", "estatisticas", "tarefas"];
+
+    function ativar(id) {
+        itens.forEach(function (li) {
+            const href = li.querySelector("a").getAttribute("href");
+            li.classList.toggle("active", href === "#" + id);
+        });
+    }
+
+   
+    function atualizarAtivo() {
+        let atual = ids[0];
+        const noFim = window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
+        if (noFim) {
+            atual = ids[ids.length - 1];
+        } else {
+            ids.forEach(function (id) {
+                const el = document.getElementById(id);
+                if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.35) {
+                    atual = id;
+                }
+            });
+        }
+        ativar(atual);
+    }
+
+    window.addEventListener("scroll", atualizarAtivo, { passive: true });
+    atualizarAtivo();
+})();
