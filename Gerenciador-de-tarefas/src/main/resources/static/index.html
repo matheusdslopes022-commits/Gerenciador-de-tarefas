@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciador de Tarefas</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="tema.css">
     <link rel="stylesheet" href="responsivo.css">
@@ -22,7 +23,7 @@
                     <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                 </svg>
                 <div>
-                    <h1>To-Do-List</h1>
+                    <h1>TaskFlow</h1>
                     <p>Gerenciador de Tarefas</p>
                 </div>
             </div>
@@ -232,6 +233,28 @@
                         </div>
                     </div>
                 </div>
+            </section>
+
+            <section class="graficos">
+                <div class="graficos-grid" id="graficos-grid" hidden>
+                    <div class="grafico-card">
+                        <h3>Situação das tarefas</h3>
+                        <p>Quanto você já concluiu.</p>
+                        <div class="grafico-box">
+                            <canvas id="grafico-situacao" role="img"
+                                aria-label="Gráfico de rosca com tarefas pendentes, concluídas e atrasadas"></canvas>
+                        </div>
+                    </div>
+                    <div class="grafico-card">
+                        <h3>Tarefas por categoria</h3>
+                        <p>Onde estão as suas tarefas.</p>
+                        <div class="grafico-box">
+                            <canvas id="grafico-categoria" role="img"
+                                aria-label="Gráfico de barras com tarefas por categoria e situação"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <p class="grafico-vazio" id="grafico-vazio">Adicione tarefas para ver as estatísticas.</p>
             </section>
 
             <section class="task-board-card" id="tarefas">
