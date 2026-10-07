@@ -22,6 +22,8 @@ botaoTema.addEventListener("click", function () {
     aplicarTema(virarEscuro);
 });
 
+
+
 const botaoAdicionar = document.getElementById("button");
 const listaDeTarefas = document.querySelector(".task-list-empty");
 const filtroSituacao = document.getElementById("filter-status");
